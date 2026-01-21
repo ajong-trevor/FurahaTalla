@@ -1,0 +1,214 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Core Philosophy: This ruleset implements a security model based on user roles and data ownership.
+     * There are two main roles: regular users (farmers/buyers) and administrators. Administrators have
+     * broad read access for oversight, while regular users have granular control over their own data.
+     * The rules strictly enforce that a user can only create or modify data they explicitly own or
+     * are a designated participant in (e.g., a contract).
+     *
+     * Data Structure: The data is organized into a flat structure of top-level collections. There is no
+     * reliance on nested data for security. Collections like `/users`, `/farmers`, and `/buyers` store
+     * user-specific profiles. `/harvestListings` are public, while `/contracts` and their associated
+     * `/payments` are private to the involved participants. Administrative roles are managed in a
+     * dedicated `/roles_admin` collection.
+     *
+     * Key Security Decisions:
+     * - Admin Access: Admins have read-only access to most user data for support and moderation but
+     *   generally cannot write user-owned data. They have exclusive write access to `/adminSettings` and
+     *   the `/roles_admin` collection.
+     * - User Data Privacy: Users cannot list or read other users' primary profiles or sub-collections.
+     *   This prevents data scraping and user enumeration.
+     * - Ownership via Denormalization: To ensure fast and secure rules, ownership and participation
+     *   data (e.g., `farmerId`, `buyerId`) is denormalized directly onto the documents being secured.
+     *   This avoids slow and costly `get()` calls in most rules.
+     * - Signup Flow: A user is explicitly allowed to create their own user document in `/users/{userId}`
+     *   after authenticating, which is a critical step for a signup process to succeed.
+     */
+
+    // --------------------------------------------------------------------------------
+    // Helper Functions
+    // --------------------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the primary function for validating data ownership.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks if the document being accessed already exists in Firestore.
+     * CRITICAL for all update and delete operations to prevent acting on non-existent data.
+     */
+    function isExistingDoc() {
+      return resource != null;
+    }
+
+    /**
+     * A convenient combination of isOwner and isExistingDoc for update/delete operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && isExistingDoc();
+    }
+
+    /**
+     * Checks if the requesting user has an admin role by verifying the existence
+     * of a document in the `/roles_admin` collection matching their UID.
+     */
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * Checks if the requesting user is a participant (farmer or buyer) in a contract.
+     * Expects the document data object (e.g., resource.data) to be passed in.
+     */
+    function isContractParticipant(docData) {
+      return isSignedIn() && (request.auth.uid == docData.farmerId || request.auth.uid == docData.buyerId);
+    }
+    
+    /**
+     * Secures child documents (like payments) by checking for participation in the parent contract.
+     * This function performs a document read, so it should be used judiciously.
+     */
+    function isParentContractParticipant(contractId) {
+      let contractData = get(/databases/$(database)/documents/contracts/$(contractId)).data;
+      return isContractParticipant(contractData);
+    }
+
+    // --------------------------------------------------------------------------------
+    // Collection Rules
+    // --------------------------------------------------------------------------------
+
+    /**
+     * @description Manages core user profiles. A user can create and manage their own
+     *              profile. Admins have read-only access.
+     * @path /users/{userId}
+     * @allow (create) A new user creating their own profile document after signing up.
+     * @deny (create) An authenticated user trying to create a profile for a different user ID.
+     * @principle Restricts access to a user's own data tree and enables the sign-up flow.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Stores farmer-specific profile data, linked to a core user profile.
+     * @path /farmers/{farmerId}
+     * @allow (create) A user creating their own farmer profile, setting the `userId` to their own UID.
+     * @deny (get) A user trying to read another user's farmer profile.
+     * @principle Enforces document ownership via an internal `userId` field.
+     */
+    match /farmers/{farmerId} {
+      allow get: if (isExistingDoc() && isOwner(resource.data.userId)) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingDoc() && isOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingDoc() && isOwner(resource.data.userId);
+    }
+
+    /**
+     * @description Stores buyer-specific profile data, linked to a core user profile.
+     * @path /buyers/{buyerId}
+     * @allow (create) A user creating their own buyer profile, setting the `userId` to their own UID.
+     * @deny (get) A user trying to read another user's buyer profile.
+     * @principle Enforces document ownership via an internal `userId` field.
+     */
+    match /buyers/{buyerId} {
+      allow get: if (isExistingDoc() && isOwner(resource.data.userId)) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingDoc() && isOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingDoc() && isOwner(resource.data.userId);
+    }
+
+    /**
+     * @description Publicly readable harvest listings. Only the farmer who created the
+     *              listing can modify or delete it.
+     * @path /harvestListings/{harvestListingId}
+     * @allow (get) Any user, including unauthenticated users, viewing a listing.
+     * @deny (update) A farmer attempting to modify a listing created by another farmer.
+     * @principle Implements a public-read, owner-write security model.
+     */
+    match /harvestListings/{harvestListingId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.farmerId == request.auth.uid;
+      allow update: if isExistingDoc() && isOwner(resource.data.farmerId) && request.resource.data.farmerId == resource.data.farmerId;
+      allow delete: if isExistingDoc() && isOwner(resource.data.farmerId);
+    }
+
+    /**
+     * @description Private contracts between a farmer and a buyer. Access is restricted
+     *              to the two participants and administrators.
+     * @path /contracts/{contractId}
+     * @allow (get) The farmer or the buyer involved in the contract reading its details.
+     * @deny (get) A user trying to read a contract they are not a part of.
+     * @principle Restricts access to a closed group of collaborators defined within the document.
+     */
+    match /contracts/{contractId} {
+      allow get: if (isExistingDoc() && isContractParticipant(resource.data)) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isContractParticipant(request.resource.data);
+      allow update: if isExistingDoc() && isContractParticipant(resource.data) && request.resource.data.farmerId == resource.data.farmerId && request.resource.data.buyerId == resource.data.buyerId;
+      allow delete: if isExistingDoc() && isContractParticipant(resource.data);
+    }
+
+    /**
+     * @description Payment records associated with a contract. Access is granted by checking
+     *              participation in the parent contract.
+     * @path /payments/{paymentId}
+     * @allow (get) The farmer or buyer on the parent contract viewing a payment record.
+     * @deny (list) Any user trying to list all payments. This is disabled for security and performance.
+     * @principle Secures a sub-resource by performing a lookup (`get`) on its parent document.
+     */
+    match /payments/{paymentId} {
+      allow get: if (isExistingDoc() && isParentContractParticipant(resource.data.contractId)) || isAdmin();
+      allow list: if false;
+      allow create: if isParentContractParticipant(request.resource.data.contractId);
+      allow update: if isExistingDoc() && isParentContractParticipant(resource.data.contractId) && request.resource.data.contractId == resource.data.contractId;
+      allow delete: if isExistingDoc() && isParentContractParticipant(resource.data.contractId);
+    }
+
+    /**
+     * @description Global platform settings. Readable by any authenticated user, but
+     *              writable only by administrators.
+     * @path /adminSettings/{adminSettingsId}
+     * @allow (get) Any signed-in user reading the platform settings.
+     * @deny (update) A regular user attempting to change the platform transaction fees.
+     * @principle Enforces role-based access control for administrative tasks.
+     */
+    match /adminSettings/{adminSettingsId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    /**
+     * @description Manages user admin roles. Existence of a document here grants a user
+     *              admin privileges across the application.
+     * @path /roles_admin/{userId}
+     * @allow (create) An existing admin granting admin rights to another user.
+     * @deny (create) A regular user trying to make themselves an admin.
+     * @principle Protects the integrity of the Database-Based Access Control (DBAC) system.
+     */
+    match /roles_admin/{userId} {
+      allow get, list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+  }
+}

@@ -1,0 +1,446 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the FurahaTalla platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "userType": {
+          "type": "string",
+          "description": "The type of user: 'farmer', 'buyer', or 'admin'."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The user's phone number."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "isVerified": {
+          "type": "boolean",
+          "description": "Indicates whether the user is verified."
+        }
+      },
+      "required": [
+        "id",
+        "userType",
+        "email"
+      ]
+    },
+    "Farmer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Farmer",
+      "type": "object",
+      "description": "Represents a farmer on the FurahaTalla platform, extending the base user profile.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Farmer entity.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Farmer)"
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the farmer's farm."
+        },
+        "farmSize": {
+          "type": "number",
+          "description": "The size of the farmer's farm in acres."
+        },
+        "cropsCultivated": {
+          "type": "array",
+          "description": "List of crops that the farmer cultivates.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isVerified": {
+          "type": "boolean",
+          "description": "Indicates whether the farmer is verified by an admin."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "location"
+      ]
+    },
+    "Buyer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Buyer",
+      "type": "object",
+      "description": "Represents a buyer on the FurahaTalla platform, extending the base user profile.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Buyer entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Buyer)"
+        },
+        "companyName": {
+          "type": "string",
+          "description": "The name of the buyer's company."
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the buyer's company."
+        },
+        "preferredCrops": {
+          "type": "array",
+          "description": "List of crops the buyer is interested in.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "companyName"
+      ]
+    },
+    "HarvestListing": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "HarvestListing",
+      "type": "object",
+      "description": "Represents a listing of a future harvest created by a farmer.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the HarvestListing entity."
+        },
+        "farmerId": {
+          "type": "string",
+          "description": "Reference to Farmer. (Relationship: Farmer 1:N HarvestListing)"
+        },
+        "cropType": {
+          "type": "string",
+          "description": "The type of crop being harvested."
+        },
+        "expectedQuantity": {
+          "type": "number",
+          "description": "The expected quantity of the harvest."
+        },
+        "expectedHarvestDate": {
+          "type": "string",
+          "description": "The expected harvest date.",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "string",
+          "description": "The location where the harvest will take place."
+        },
+        "minimumAcceptablePrice": {
+          "type": "number",
+          "description": "The minimum acceptable price for the harvest."
+        },
+        "available": {
+          "type": "boolean",
+          "description": "Indicates if the harvest is still available."
+        }
+      },
+      "required": [
+        "id",
+        "farmerId",
+        "cropType",
+        "expectedQuantity",
+        "expectedHarvestDate",
+        "location",
+        "minimumAcceptablePrice"
+      ]
+    },
+    "Contract": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Contract",
+      "type": "object",
+      "description": "Represents a contract between a farmer and a buyer for a future harvest.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Contract entity."
+        },
+        "farmerId": {
+          "type": "string",
+          "description": "Reference to Farmer. (Relationship: Farmer 1:N Contract)"
+        },
+        "buyerId": {
+          "type": "string",
+          "description": "Reference to Buyer. (Relationship: Buyer 1:N Contract)"
+        },
+        "harvestListingId": {
+          "type": "string",
+          "description": "Reference to HarvestListing. (Relationship: HarvestListing 1:N Contract)"
+        },
+        "cropType": {
+          "type": "string",
+          "description": "The type of crop in the contract."
+        },
+        "quantity": {
+          "type": "number",
+          "description": "The quantity of the crop in the contract."
+        },
+        "price": {
+          "type": "number",
+          "description": "The agreed price for the crop."
+        },
+        "deliveryDate": {
+          "type": "string",
+          "description": "The agreed delivery date.",
+          "format": "date-time"
+        },
+        "advancePaymentPercentage": {
+          "type": "number",
+          "description": "The percentage of the payment to be paid in advance."
+        },
+        "contractStatus": {
+          "type": "string",
+          "description": "The status of the contract (Draft, Signed, Pending Payment, Paid, Delivered, Completed)."
+        },
+        "buyerSignature": {
+          "type": "string",
+          "description": "Timestamped signature of the buyer."
+        },
+        "farmerSignature": {
+          "type": "string",
+          "description": "Timestamped signature of the farmer."
+        }
+      },
+      "required": [
+        "id",
+        "farmerId",
+        "buyerId",
+        "harvestListingId",
+        "cropType",
+        "quantity",
+        "price",
+        "deliveryDate",
+        "advancePaymentPercentage",
+        "contractStatus"
+      ]
+    },
+    "Payment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Payment",
+      "type": "object",
+      "description": "Represents a payment made for a contract.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Payment entity."
+        },
+        "contractId": {
+          "type": "string",
+          "description": "Reference to Contract. (Relationship: Contract 1:N Payment)"
+        },
+        "paymentType": {
+          "type": "string",
+          "description": "The type of payment (Advance, Final)."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the payment."
+        },
+        "paymentDate": {
+          "type": "string",
+          "description": "The date of the payment.",
+          "format": "date-time"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "The method of payment (Mobile Money, Escrow)."
+        },
+        "paymentStatus": {
+          "type": "string",
+          "description": "The status of the payment (Pending, Paid)."
+        }
+      },
+      "required": [
+        "id",
+        "contractId",
+        "paymentType",
+        "amount",
+        "paymentDate",
+        "paymentMethod",
+        "paymentStatus"
+      ]
+    },
+    "AdminSettings": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AdminSettings",
+      "type": "object",
+      "description": "Represents admin-configurable settings for the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AdminSettings entity."
+        },
+        "advancePaymentPercentage": {
+          "type": "number",
+          "description": "The default advance payment percentage."
+        },
+        "transactionFees": {
+          "type": "number",
+          "description": "The transaction fees charged by the platform."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Accessible to the user and admins.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/farmers/{farmerId}",
+        "definition": {
+          "entityName": "Farmer",
+          "schema": {
+            "$ref": "#/backend/entities/Farmer"
+          },
+          "description": "Stores farmer profiles, extending the user profile.  Accessible to the farmer and admins.",
+          "params": [
+            {
+              "name": "farmerId",
+              "description": "The unique identifier for the farmer."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/buyers/{buyerId}",
+        "definition": {
+          "entityName": "Buyer",
+          "schema": {
+            "$ref": "#/backend/entities/Buyer"
+          },
+          "description": "Stores buyer profiles, extending the user profile. Accessible to the buyer and admins.",
+          "params": [
+            {
+              "name": "buyerId",
+              "description": "The unique identifier for the buyer."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/harvestListings/{harvestListingId}",
+        "definition": {
+          "entityName": "HarvestListing",
+          "schema": {
+            "$ref": "#/backend/entities/HarvestListing"
+          },
+          "description": "Stores listings of future harvests. Includes denormalized 'farmerId' for authorization independence.",
+          "params": [
+            {
+              "name": "harvestListingId",
+              "description": "The unique identifier for the harvest listing."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/contracts/{contractId}",
+        "definition": {
+          "entityName": "Contract",
+          "schema": {
+            "$ref": "#/backend/entities/Contract"
+          },
+          "description": "Stores contracts between farmers and buyers. Includes denormalized 'farmerId' and 'buyerId' for authorization independence.",
+          "params": [
+            {
+              "name": "contractId",
+              "description": "The unique identifier for the contract."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/payments/{paymentId}",
+        "definition": {
+          "entityName": "Payment",
+          "schema": {
+            "$ref": "#/backend/entities/Payment"
+          },
+          "description": "Stores payment information for contracts.",
+          "params": [
+            {
+              "name": "paymentId",
+              "description": "The unique identifier for the payment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/adminSettings/{adminSettingsId}",
+        "definition": {
+          "entityName": "AdminSettings",
+          "schema": {
+            "$ref": "#/backend/entities/AdminSettings"
+          },
+          "description": "Stores admin-configurable settings for the platform.",
+          "params": [
+            {
+              "name": "adminSettingsId",
+              "description": "The unique identifier for the admin settings."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "roles_admin",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Documents in this collection represent admin roles. Existence of a document implies the user is an admin.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, while adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and QAPs (Rules are not Filters). It avoids hierarchical authorization dependencies by denormalizing authorization context, making security rules simpler and more robust. The design employs structural segregation, access modeling, and data clarity to enhance debuggability and maintainability.\n\n1.  **Authorization Independence:** Access control is managed by direct checks on user roles and ownership, avoiding `get()` calls in security rules. This is achieved by storing relevant authorization information (e.g., user roles, ownership) directly within the documents where access needs to be controlled. For example, the farmerId is present in HarvestListing and Contract documents.\n\n2.  **Clarity of Intent:** The structure makes the authorization intent clear through standardized naming conventions and explicit data modeling. For instance, user-owned data is stored under `/users/{userId}/...`, and collaborative data uses membership maps where applicable. This ensures that security rules are straightforward and easy to understand.\n\n3.  **DBAC (Database-Based Access Control):** User roles (e.g., admin) are stored in dedicated collections (e.g., `/roles_admin/{uid}`), and authorization rules rely solely on `request.auth.uid` to verify these roles. This eliminates the need for custom claims and simplifies access control logic.\n\n4.  **QAPs (Rules are not Filters):** Structural segregation is used to enable secure `list` operations. For example, public listings are stored separately from private drafts, allowing security rules to efficiently filter accessible data without complex logic.\n\n5.  **Invariants:** The structure supports the integrity of ownership, timestamps, and denormalized data. Ownership is explicitly defined using fields like `farmerId` and `buyerId`, making it easy to enforce ownership-based security rules. Timestamps can be added to documents to track creation and modification times, enhancing data integrity."
+  }
+}
