@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A lush green farm field under a bright sky",
+      "imageUrl": "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYXJtJTIwZmllbGR8ZW58MHx8fHwxNzY4OTk0NDQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farm field"
+    },
+    {
+      "id": "farmer-smiling",
+      "description": "A happy farmer holding fresh produce in a field",
+      "imageUrl": "https://images.unsplash.com/photo-1655979914071-31aded7393c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYXBweSUyMGZhcm1lcnxlbnwwfHx8fDE3NjkwMzA4Njl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "happy farmer"
+    },
+    {
+      "id": "market-stall",
+      "description": "A vibrant market stall with a variety of fresh vegetables",
+      "imageUrl": "https://images.unsplash.com/photo-1727621248016-611137d94a38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYXJrZXQlMjBzdGFsbHxlbnwwfHx8fDE3NjkwMzA4Njl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "market stall"
+    },
+    {
+      "id": "login-background",
+      "description": "Abstract pattern of green leaves",
+      "imageUrl": "https://images.unsplash.com/photo-1524055988636-436cfa46e59e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxncmVlbiUyMGxlYXZlc3xlbnwwfHx8fDE3Njg5OTg3ODh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "green leaves"
+    }
+  ]
 }
