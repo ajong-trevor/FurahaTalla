@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc } from "firebase/firestore";
+import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,9 +37,16 @@ export default function SignupPage() {
       fullName: "",
       email: "",
       password: "",
-      role: searchParams.get("role") === "buyer" ? "buyer" : "farmer",
+      role: "farmer",
     },
   });
+
+  useEffect(() => {
+    const roleFromParams = searchParams.get("role");
+    if (roleFromParams === "buyer") {
+      form.setValue("role", "buyer");
+    }
+  }, [searchParams, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!auth || !firestore) return;
@@ -151,7 +159,7 @@ export default function SignupPage() {
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                     className="flex gap-4"
                   >
                     <FormItem className="flex items-center space-x-2">
