@@ -8,9 +8,9 @@ import { placeholderImages } from "@/lib/placeholder-images";
 import { CheckCircle2, Users, FileText, Truck, Leaf, Banknote } from "lucide-react";
 
 export default function Home() {
-  const heroImage = placeholderImages.find(img => img.id === "hero");
-  const farmerImage = placeholderImages.find(img => img.id === "farmer-smiling");
-  const buyerImage = placeholderImages.find(img => img.id === "market-stall");
+  const heroImage = placeholderImages.find(img => img.id === "farmer-smiling");
+  const farmerImage = placeholderImages.find(img => img.id === "market-stall");
+  const buyerImage = placeholderImages.find(img => img.id === "hero");
 
   return (
     <div className="flex flex-col min-h-screen">
