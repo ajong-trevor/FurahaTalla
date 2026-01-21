@@ -8,10 +8,14 @@ import { Sprout, MapPin, Calendar, DollarSign, ListFilter, ArrowRight } from "lu
 import Link from "next/link";
 
 const listings = [
-    { id: '1', crop: 'Tomatoes', farmer: 'Abebe Bikila', location: 'Oromia, Ethiopia', quantity: '500 kg', price: '$0.80/kg', date: '2024-08-15' },
-    { id: '2', crop: 'Maize', farmer: 'Fatima Zahra', location: 'Rift Valley, Kenya', quantity: '2 tonnes', price: '$350/tonne', date: '2024-09-01' },
-    { id: '3', crop: 'Coffee Beans', farmer: 'Kofi Annan Farms', location: 'Sidama, Ethiopia', quantity: '1 tonne', price: '$4.50/kg', date: '2024-11-20' },
-    { id: '4', crop: 'Green Beans', farmer: 'Grace Mumbi', location: 'Nyeri, Kenya', quantity: '300 kg', price: '$1.20/kg', date: '2024-07-30' },
+    { id: '1', crop: 'Tomatoes', farmer: 'Abebe Bikila', location: 'Ndop, Bamenda', quantity: '500 kg', price: 'FCFA 450/kg', date: '2026-08-15' },
+    { id: '2', crop: 'Maize', farmer: 'Fatima Zahra', location: 'Fiango, Kumba', quantity: '2 tonnes', price: 'FCFA 350/kg', date: '2026-09-01' },
+    { id: '3', crop: 'Coffee Beans', farmer: 'Kofi Annan Farms', location: 'Mamfe', quantity: '1 tonne', price: 'FCFA 725/kg', date: '2026-11-20' },
+    { id: '4', crop: 'Green Beans', farmer: 'Grace Mumbi', location: 'Mutengene', quantity: '300 kg', price: 'FCFA 625/kg', date: '2026-07-30' },
+    { id: '5', crop: 'Ginger', farmer: 'Abebe Bikila', location: 'Ndop, Bamenda', quantity: '500 kg', price: 'FCFA 450/kg', date: '2026-08-15' },
+    { id: '6', crop: 'Cassava', farmer: 'Fatima Zahra', location: 'Fiango, Kumba', quantity: '2 tonnes', price: 'FCFA 350/kg', date: '2026-09-01' },
+    { id: '7', crop: 'White pepper', farmer: 'Kofi Annan Farms', location: 'Mamfe', quantity: '1 tonne', price: 'FCFA 725/kg', date: '2026-11-20' },
+    { id: '8', crop: 'Onion', farmer: 'Grace Mumbi', location: 'Mutengene', quantity: '300 kg', price: 'FCFA 625/kg', date: '2026-07-30' },
 ];
 
 export default function BrowsePage() {
@@ -39,7 +43,7 @@ export default function BrowsePage() {
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="location">Location</Label>
-                                <Input id="location" placeholder="e.g., Kenya" />
+                                <Input id="location" placeholder="e.g., Mamfe" />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="sort-by">Sort By</Label>

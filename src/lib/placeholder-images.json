@@ -8,15 +8,15 @@
     },
     {
       "id": "farmer-smiling",
-      "description": "A black African woman farming in a field.",
-      "imageUrl": "https://images.unsplash.com/photo-1621297317303-15c8c2a9394a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhZnJpY2FuJTIwZmFybXxlbnwwfHx8fDE3MjE0MDQyNDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "african farmer"
+      "description": "A farmer working in a field",
+      "imageUrl": "https://images.unsplash.com/photo-1630600967074-3095a8865ca3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmYXJtZXIlMjBmaWVsZHxlbnwwfHx8fDE3NjkwMzMzOTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "farmer field"
     },
     {
       "id": "market-stall",
-      "description": "An African market with women selling produce.",
-      "imageUrl": "https://images.unsplash.com/photo-1547489690-31c330b65287?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwbWFya2V0fGVufDB8fHx8fDE3MjE0MDQyODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "african market"
+      "description": "A bustling market scene with fresh produce",
+      "imageUrl": "https://images.unsplash.com/photo-1768776847082-9ddb43ec49ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtYXJrZXQlMjBwcm9kdWNlfGVufDB8fHx8MTc2OTAzMzM5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "market produce"
     },
     {
       "id": "login-background",
