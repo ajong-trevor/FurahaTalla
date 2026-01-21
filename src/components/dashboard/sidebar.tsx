@@ -35,7 +35,7 @@ const navConfig = {
   ],
   buyer: [
     { href: "/dashboard/buyer", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/browse", label: "Browse Harvests", icon: ShoppingCart },
+    { href: "/dashboard/browse", label: "Browse Harvests", icon: ShoppingCart },
     { href: "/dashboard/contracts", label: "My Contracts", icon: FileText },
     { href: "/dashboard/payments", label: "Payments", icon: Landmark },
   ],

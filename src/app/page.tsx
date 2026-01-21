@@ -41,7 +41,7 @@ export default function Home() {
                  <Link href="/signup">Get Started</Link>
                </Button>
                <Button asChild size="lg" variant="secondary">
-                 <Link href="/browse">Browse Harvests</Link>
+                 <Link href="/dashboard/browse">Browse Harvests</Link>
                </Button>
              </div>
            </div>

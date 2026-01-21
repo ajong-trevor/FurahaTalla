@@ -101,7 +101,7 @@ export default function BuyerDashboard() {
                 <CardDescription>Your recent forward contracts.</CardDescription>
             </div>
             <Button asChild size="sm" className="ml-auto gap-1">
-                <Link href="/browse">
+                <Link href="/dashboard/browse">
                 Browse Harvests
                 <ShoppingCart className="h-4 w-4" />
                 </Link>
