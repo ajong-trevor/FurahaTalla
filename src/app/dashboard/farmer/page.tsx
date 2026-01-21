@@ -50,7 +50,7 @@ export default function FarmerDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
+            <div className="text-2xl font-bold">FCFA 45,231,890</div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
             </p>
@@ -132,7 +132,7 @@ export default function FarmerDashboard() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">2023-06-23</TableCell>
-                <TableCell className="text-right">$250.00</TableCell>
+                <TableCell className="text-right">FCFA 250,000</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>
@@ -148,7 +148,7 @@ export default function FarmerDashboard() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">2023-06-24</TableCell>
-                <TableCell className="text-right">$150.00</TableCell>
+                <TableCell className="text-right">FCFA 150,000</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>
@@ -164,7 +164,7 @@ export default function FarmerDashboard() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">2023-06-25</TableCell>
-                <TableCell className="text-right">$350.00</TableCell>
+                <TableCell className="text-right">FCFA 350,000</TableCell>
               </TableRow>
             </TableBody>
           </Table>
