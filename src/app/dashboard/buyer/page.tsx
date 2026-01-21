@@ -51,7 +51,7 @@ export default function BuyerDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$12,842.10</div>
+            <div className="text-2xl font-bold">FCFA 12,842.10</div>
             <p className="text-xs text-muted-foreground">
               Total for active contracts
             </p>
@@ -133,7 +133,7 @@ export default function BuyerDashboard() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">2023-06-23</TableCell>
-                <TableCell className="text-right">$250.00</TableCell>
+                <TableCell className="text-right">FCFA 250.00</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>
@@ -149,7 +149,7 @@ export default function BuyerDashboard() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">2023-06-24</TableCell>
-                <TableCell className="text-right">$150.00</TableCell>
+                <TableCell className="text-right">FCFA 150.00</TableCell>
               </TableRow>
             </TableBody>
           </Table>
