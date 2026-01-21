@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import {
   SidebarContent,
   SidebarHeader,
@@ -12,11 +14,8 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/icons";
-import { cn } from "@/lib/utils";
 import {
-  Home,
   Users,
-  Package,
   FileText,
   Settings,
   ShieldCheck,
@@ -25,36 +24,51 @@ import {
   LayoutDashboard,
   Sprout,
 } from "lucide-react";
-import { Button } from "../ui/button";
+import { useUser, useFirestore } from "@/firebase";
 
-const farmerNav = [
-  { href: "/dashboard/farmer", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/farmer/listings", label: "My Listings", icon: Sprout },
-  { href: "/dashboard/contracts", label: "Contracts", icon: FileText },
-  { href: "/dashboard/payments", label: "Payments", icon: Landmark },
-];
-
-const buyerNav = [
-  { href: "/dashboard/buyer", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/browse", label: "Browse Harvests", icon: ShoppingCart },
-  { href: "/dashboard/contracts", label: "My Contracts", icon: FileText },
-  { href: "/dashboard/payments", label: "Payments", icon: Landmark },
-];
-
-const adminNav = [
-  { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/admin/users", label: "User Management", icon: Users },
-  { href: "/dashboard/admin/verifications", label: "Verifications", icon: ShieldCheck },
-  { href: "/dashboard/admin/contracts", label: "All Contracts", icon: FileText },
-  { href: "/dashboard/admin/settings", label: "Settings", icon: Settings },
-];
+const navConfig = {
+  farmer: [
+    { href: "/dashboard/farmer", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/farmer/listings", label: "My Listings", icon: Sprout },
+    { href: "/dashboard/contracts", label: "Contracts", icon: FileText },
+    { href: "/dashboard/payments", label: "Payments", icon: Landmark },
+  ],
+  buyer: [
+    { href: "/dashboard/buyer", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/browse", label: "Browse Harvests", icon: ShoppingCart },
+    { href: "/dashboard/contracts", label: "My Contracts", icon: FileText },
+    { href: "/dashboard/payments", label: "Payments", icon: Landmark },
+  ],
+  admin: [
+    { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
+    { href: "/dashboard/admin/users", label: "User Management", icon: Users },
+    { href: "/dashboard/admin/verifications", label: "Verifications", icon: ShieldCheck },
+    { href: "/dashboard/admin/contracts", label: "All Contracts", icon: FileText },
+    { href: "/dashboard/admin/settings", label: "Settings", icon: Settings },
+  ],
+};
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  // This is a mock. In a real app, you'd get the user role from an auth context.
-  const userRole = pathname.split("/")[2] || 'farmer';
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const [userRole, setUserRole] = useState<"farmer" | "buyer" | "admin" | null>(null);
+  const [displayName, setDisplayName] = useState("");
 
-  const navItems = userRole === 'farmer' ? farmerNav : userRole === 'buyer' ? buyerNav : adminNav;
+  useEffect(() => {
+    if (user && firestore) {
+      const userDocRef = doc(firestore, "users", user.uid);
+      getDoc(userDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setUserRole(userData.userType);
+          setDisplayName(userData.displayName || user.displayName || "User");
+        }
+      });
+    }
+  }, [user, firestore]);
+  
+  const navItems = userRole ? navConfig[userRole] : [];
 
   return (
     <>
@@ -84,7 +98,7 @@ export function DashboardSidebar() {
       <SidebarSeparator />
       <SidebarFooter>
         <div className="flex flex-col gap-2 p-2">
-            <span className="text-sm font-semibold">Jane Doe</span>
+            <span className="text-sm font-semibold">{displayName}</span>
             <span className="text-xs text-muted-foreground capitalize">{userRole}</span>
         </div>
       </SidebarFooter>
