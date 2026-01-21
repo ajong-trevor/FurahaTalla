@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,7 +26,6 @@ const formSchema = z.object({
 });
 
 export default function SignupPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const { auth, firestore } = useFirebase();
   const { toast } = useToast();
@@ -42,11 +41,12 @@ export default function SignupPage() {
   });
 
   useEffect(() => {
-    const roleFromParams = searchParams.get("role");
+    const params = new URLSearchParams(window.location.search);
+    const roleFromParams = params.get("role");
     if (roleFromParams === "buyer") {
       form.setValue("role", "buyer");
     }
-  }, [searchParams, form]);
+  }, [form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!auth || !firestore) return;
